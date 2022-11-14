@@ -1,1 +1,1 @@
-# go-simple_web_site
+# simple_web_site
