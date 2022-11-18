@@ -8,15 +8,7 @@
     <link rel="stylesheet" href="https://getbootstrap.com/docs/5.2/examples/cover/cover.css">
     <title>Home page</title>
 </head>
-<!--
-    {{ if eq .Name "Bobby" }}
-    <span>Hello</span>
-    {{ else }}
-    <span>Not hello</span>
-    {{ end }}
 
-    <h1>Main page</h1>
--->
 
 <body class="d-flex h-100 text-center text-bg-dark">
 
@@ -35,18 +27,8 @@
         <main class="px-3">
             <h1>Main Page</h1>
             <p class="lead"></p>
-            <p class="lead">User: {{ .Name }}</p>
-            <p class="lead">Age: {{ .Age }}</p>
-            <p class="lead">Money: {{ .Money }}</p>
-            <p class="lead">Hobbies: </p>
+            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur iure consequuntur quod, natus dignissimos vel, ipsa minima fuga tenetur laudantium voluptates accusantium, ad, eaque at. Omnis ullam fugit reprehenderit sequi.</p>
 
-            <ul>
-                {{ range .Hobbies }}
-                    <p class="lead"><b>{{ . }}</b> </p>
-                {{ else }}
-                    <p class="lead"><b>NaN</b></p>
-                {{ end }}
-            </ul>
             <p class="lead">
                 <a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Learn more</a>
             </p>
