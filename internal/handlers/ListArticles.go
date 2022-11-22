@@ -3,7 +3,6 @@ package handlers
 import (
     "fmt"
     "net/http"
-    "html/template"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
 
@@ -13,17 +12,6 @@ import (
 
 
 func ListArticles(w http.ResponseWriter, r *http.Request) {
-    templ, err := template.ParseFiles(
-        "templates/" + "list_articles" + ".html",
-        "templates/head.html",
-        "templates/header.html",
-        "templates/footer.html",
-    )
-
-    if err!= nil {
-        fmt.Fprintf(w, err.Error())
-    }
-
     // Connect to db
     db, err := sql.Open(
         "mysql",
@@ -58,5 +46,6 @@ func ListArticles(w http.ResponseWriter, r *http.Request) {
         posts = append(posts, post)
     }
 
-    templ.ExecuteTemplate(w, "list_articles", posts)
+    // display page
+    StandardTemplate("list_articles", w, r, posts)
 }
