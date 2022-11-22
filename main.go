@@ -5,9 +5,22 @@ import (
     "net/http"
     "html/template"
 
+    "context"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
 )
+
+const db_login = "root"
+const db_passwrd = ""
+const db_address = "127.0.0.1:3306"
+const db_name = "simple_website"
+
+type Article struct {
+    Id uint16
+    Title string
+    Announce string
+    Text string
+}
 
 func handleFunc() {
     http.Handle(
@@ -20,27 +33,77 @@ func handleFunc() {
     http.HandleFunc("/contacts/", contacts)
     http.HandleFunc("/something_wrong/", something_wrong)
     http.HandleFunc("/save_article/", save_article)
+    http.HandleFunc("/list_articles/", list_articles)
     http.ListenAndServe(":8084", nil)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-    ExecuteTemplate("index", w, r)
+    StandardTemplate("index", w, r)
 }
 
 func create(w http.ResponseWriter, r *http.Request) {
-    ExecuteTemplate("create", w, r)
+    StandardTemplate("create", w, r)
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
-    ExecuteTemplate("about", w, r)
+    StandardTemplate("about", w, r)
 }
 
 func contacts(w http.ResponseWriter, r *http.Request) {
-    ExecuteTemplate("contacts", w, r)
+    StandardTemplate("contacts", w, r)
 }
 
 func something_wrong(w http.ResponseWriter, r *http.Request) {
-    ExecuteTemplate("something_wrong", w, r)
+    StandardTemplate("something_wrong", w, r)
+}
+
+func list_articles(w http.ResponseWriter, r *http.Request) {
+    templ, err := template.ParseFiles(
+        "templates/" + "list_articles" + ".html",
+        "templates/head.html",
+        "templates/header.html",
+        "templates/footer.html",
+    )
+
+    if err!= nil {
+        fmt.Fprintf(w, err.Error())
+    }
+
+    // Connect to db
+    db, err := sql.Open(
+        "mysql",
+        fmt.Sprintf(
+            "%s:%s@tcp(%s)/%s",
+            db_login,
+            db_passwrd,
+            db_address,
+            db_name,
+        ),
+    )
+    if err != nil {
+        panic(err.Error())
+    }
+    defer db.Close()
+
+    res, err := db.Query("SELECT `id`, `title`, `announce`, `text` FROM `articles`")
+    if err != nil {
+        panic(err.Error())
+    }
+    defer res.Close()
+
+    // Load articles to page
+    var posts = []Article{}
+    for res.Next() {
+        var post Article
+        err = res.Scan(&post.Id, &post.Title, &post.Announce, &post.Text)
+        if err != nil {
+            panic(err.Error())
+        }
+        // fmt.Printf("Id: %d\nTitle: %s\nAnnounce: %s\n", post.Id, post.Title, post.Announce)
+        posts = append(posts, post)
+    }
+
+    templ.ExecuteTemplate(w, "list_articles", posts)
 }
 
 func save_article(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +116,7 @@ func save_article(w http.ResponseWriter, r *http.Request) {
     }
 
     title := r.FormValue("title")
-    anounce := r.FormValue("anounce")
+    announce := r.FormValue("announce")
     article_text := r.FormValue("article_text")
 
     if (title == "") || (article_text == "") {
@@ -65,7 +128,7 @@ func save_article(w http.ResponseWriter, r *http.Request) {
 
     // Print parsed data
     fmt.Println("title:", title)
-    fmt.Println("anounce:", anounce)
+    fmt.Println("announce:", announce)
     rune_text := string([]rune(article_text))
     if (len(rune_text) < 100) {
         fmt.Println("article_text:", rune_text)
@@ -74,32 +137,45 @@ func save_article(w http.ResponseWriter, r *http.Request) {
     }
 
     // Connect to db
-    db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/simple_website")
+    db, err := sql.Open(
+        "mysql",
+        fmt.Sprintf(
+            "%s:%s@tcp(%s)/%s",
+            db_login,
+            db_passwrd,
+            db_address,
+            db_name,
+        ),
+    )
     if err != nil {
-        panic(err)
+        panic(err.Error())
     }
     defer db.Close()
 
     // Insert data to table
-    insert, err := db.Query(
-        fmt.Sprintf(
-            "INSERT INTO articles (title, anounce, text) VALUES ('%s', '%s', '%s')",
-            title,
-            anounce,
-            article_text,
-        ),
+    query := "INSERT INTO `articles` (`title`, `announce`, `text`) VALUES (?, ?, ?)"
+    insert, err := db.ExecContext(
+        context.Background(),
+        query,
+        title,
+        announce,
+        article_text,
     )
     if err != nil {
-        panic(err)
+        panic(err.Error())
     }
-    defer insert.Close()
+    insertId, err := insert.LastInsertId()
+    if err != nil {
+        panic(err.Error())
+    }
+    fmt.Println("inserted id:", insertId)
 
     // Redirect: (response writer, request, page to redirect, response code)
     http.Redirect(w, r, "/main/", 301) // http.StatusSeeOther() = 301
 
 }
 
-func ExecuteTemplate(page_name string, w http.ResponseWriter, r *http.Request) {
+func StandardTemplate(page_name string, w http.ResponseWriter, r *http.Request) {
     templ, err := template.ParseFiles(
         "templates/" + page_name + ".html",
         "templates/head.html",
@@ -111,7 +187,7 @@ func ExecuteTemplate(page_name string, w http.ResponseWriter, r *http.Request) {
         fmt.Println("[+] Go to the page:", page_name)
         templ.ExecuteTemplate(w, page_name, nil)
     } else {
-        panic(err)
+        fmt.Fprintf(w, err.Error())
     }
 }
 
@@ -127,7 +203,7 @@ func SomethingWentWrong(watswrong string, w http.ResponseWriter, r *http.Request
         fmt.Println("[+] Go to the page:", "something_wrong")
         templ.ExecuteTemplate(w, "something_wrong", watswrong)
     } else {
-        panic(err)
+        fmt.Fprintf(w, err.Error())
     }
 }
 

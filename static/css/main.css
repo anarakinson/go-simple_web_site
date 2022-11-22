@@ -30,6 +30,16 @@ html {
   min-height: 100vh;
 }
 
+a {
+  text-decoration: none; /* Disable underline */
+  color: #000; /* Link color */
+  border-bottom: .25rem solid transparent;
+}
+a:hover {
+  color: rgba(255, 50, 50, .8); /* Link color */
+  border-bottom-color: rgba(255, 50, 50, .25);
+}
+
 
 /*
  * Header
@@ -42,7 +52,7 @@ html {
 
 .nav-masthead .nav-link:hover,
 .nav-masthead .nav-link:focus {
-  border-bottom-color: rgba(255, 255, 255, .25);
+  border-bottom-color: rgba(255, 50, 50, .25);
 }
 
 .nav-masthead .nav-link + .nav-link {
@@ -50,6 +60,26 @@ html {
 }
 
 .nav-masthead .active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+/*
+ * Main page link
+ */
+
+.main-page-link {
+    color: rgba(255, 255, 255, .5);
+    border-bottom: .25rem solid transparent;
+}
+
+.main-page-link:hover,
+.main-page-link:focus {
+  /* color: rgba(255, 50, 50, .25); */
+  border-bottom-color: rgba(255, 50, 50, .25);
+}
+
+.main-page-link .active {
   color: #fff;
   border-bottom-color: #fff;
 }
