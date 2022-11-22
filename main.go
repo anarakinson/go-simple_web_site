@@ -8,6 +8,8 @@ import (
     "context"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
+
+    "github.com/gorilla/mux"
 )
 
 const db_login = "root"
@@ -23,17 +25,22 @@ type Article struct {
 }
 
 func handleFunc() {
+    router := mux.NewRouter()
+
     http.Handle(
         "/static/",
         http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))),
-    )
-    http.HandleFunc("/main/", index)
-    http.HandleFunc("/create/", create)
-    http.HandleFunc("/about/", about)
-    http.HandleFunc("/contacts/", contacts)
-    http.HandleFunc("/something_wrong/", something_wrong)
-    http.HandleFunc("/save_article/", save_article)
-    http.HandleFunc("/list_articles/", list_articles)
+    ) // connect static objects, such as styles, pictures, etc.
+    router.HandleFunc("/main/", index).Methods("GET")
+    router.HandleFunc("/create/", create).Methods("GET")
+    router.HandleFunc("/about/", about).Methods("GET")
+    router.HandleFunc("/contacts/", contacts).Methods("GET")
+    router.HandleFunc("/something_wrong/", something_wrong)
+    router.HandleFunc("/save_article/", save_article).Methods("POST")
+    router.HandleFunc("/articles/", list_articles).Methods("GET")
+    router.HandleFunc("/post/{id:[0-9]+}/", show_article)
+
+    http.Handle("/", router)
     http.ListenAndServe(":8084", nil)
 }
 
@@ -55,6 +62,62 @@ func contacts(w http.ResponseWriter, r *http.Request) {
 
 func something_wrong(w http.ResponseWriter, r *http.Request) {
     StandardTemplate("something_wrong", w, r)
+}
+
+func show_article(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    w.WriteHeader(http.StatusOK) // http.StatusOK -> 200
+
+    // Connect to db
+    db, err := sql.Open(
+        "mysql",
+        fmt.Sprintf(
+            "%s:%s@tcp(%s)/%s",
+            db_login,
+            db_passwrd,
+            db_address,
+            db_name,
+        ),
+    )
+    if err != nil {
+        panic(err.Error())
+    }
+    defer db.Close()
+
+    query := fmt.Sprintf("SELECT `id`, `title`, `announce`, `text` FROM `articles` WHERE `id` = %s", vars["id"])
+    fmt.Println(query)
+    res, err := db.Query(query)
+    if err != nil {
+        panic(err.Error())
+    }
+    defer res.Close()
+
+    // parse result
+    var showPost = Article{}
+    for res.Next() {
+        var post Article
+        err = res.Scan(&post.Id, &post.Title, &post.Announce, &post.Text)
+        if err != nil {
+            panic(err.Error)
+        }
+        showPost = post
+    }
+
+    // display article
+    page_name := "show_article"
+    templ, err := template.ParseFiles(
+        "templates/" + page_name + ".html",
+        "templates/head.html",
+        "templates/header.html",
+        "templates/footer.html",
+    )
+
+    if (err == nil) {
+        fmt.Println("[+] Go to the page:", page_name)
+        templ.ExecuteTemplate(w, page_name, showPost)
+    } else {
+        fmt.Fprintf(w, err.Error())
+    }
 }
 
 func list_articles(w http.ResponseWriter, r *http.Request) {

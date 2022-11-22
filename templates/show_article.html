@@ -1,0 +1,18 @@
+{{ define "show_article" }}
+
+{{ template "header" }}
+
+        <main class="px-3">
+            <h1 class="cover-heading">{{ .Title}}</h1>
+            <p class="lead"></p>
+            <p class="lead" align="justify">
+                <span style="white-space: pre-line">{{ .Text }}</span>
+            </p>
+            <p class="lead">
+                <a href="/articles/" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Back</a>
+            </p>
+        </main>
+
+{{ template "footer" }}
+
+{{ end }}
