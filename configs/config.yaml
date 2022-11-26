@@ -1,5 +1,10 @@
-login: "root"
-passwrd: ""
-address: "127.0.0.1"
-port: "3306"
-name: "simple_website"
+app:
+    host: "127.0.0.1"
+    port: "8084"
+
+database:
+    login: "root"
+    passwrd: ""
+    address: "127.0.0.1"
+    port: "3306"
+    name: "simple_website"

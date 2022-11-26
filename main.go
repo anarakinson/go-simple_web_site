@@ -1,16 +1,20 @@
 package main
 
 import (
+    "fmt"
     "net/http"
-    _ "github.com/go-sql-driver/mysql"
-    "github.com/gorilla/mux"
 
     "internal/handlers"
+
+    _ "github.com/go-sql-driver/mysql"
+    "github.com/gorilla/mux"
+    "github.com/spf13/viper"
 )
 
 
 func handleFunc() {
     router := mux.NewRouter()
+    port := viper.GetString("app.port")
 
     http.Handle(
         "/static/",
@@ -26,7 +30,7 @@ func handleFunc() {
     router.HandleFunc("/post/{id:[0-9]+}/", handlers.ShowArticle).Methods("GET")
 
     http.Handle("/", router)
-    http.ListenAndServe(":8084", nil)
+    http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -49,8 +53,18 @@ func something_wrong(w http.ResponseWriter, r *http.Request) {
     handlers.StandardTemplate("something_wrong", w, r)
 }
 
+func initConfig() error {
+    viper.AddConfigPath("configs")
+    viper.SetConfigName("config")
+    return viper.ReadInConfig()
+}
 
 
 func main() {
+    err := initConfig()
+    if err != nil {
+        panic(err.Error())
+    }
+
     handleFunc()
 }
