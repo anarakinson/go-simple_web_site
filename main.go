@@ -23,7 +23,7 @@ func handleFunc() {
     router.HandleFunc("/something_wrong/", something_wrong)
     router.HandleFunc("/save_article/", handlers.SaveArticle).Methods("POST")
     router.HandleFunc("/articles/", handlers.ListArticles).Methods("GET")
-    router.HandleFunc("/post/{id:[0-9]+}/", handlers.ShowArticle)
+    router.HandleFunc("/post/{id:[0-9]+}/", handlers.ShowArticle).Methods("GET")
 
     http.Handle("/", router)
     http.ListenAndServe(":8084", nil)

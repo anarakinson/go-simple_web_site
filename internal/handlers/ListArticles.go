@@ -12,15 +12,20 @@ import (
 
 
 func ListArticles(w http.ResponseWriter, r *http.Request) {
+    // parse configs
+    config, err := database.ParseConfig()
+    if err != nil {panic(err.Error())}
+
     // Connect to db
     db, err := sql.Open(
         "mysql",
         fmt.Sprintf(
-            "%s:%s@tcp(%s)/%s",
-            database.Login,
-            database.Passwrd,
-            database.Address,
-            database.Name,
+            "%s:%s@tcp(%s:%s)/%s",
+            config.Login,
+            config.Passwrd,
+            config.Address,
+            config.Port,
+            config.Name,
         ),
     )
     if err != nil {
