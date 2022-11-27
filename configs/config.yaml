@@ -4,7 +4,6 @@ app:
 
 database:
     login: "root"
-    passwrd: ""
     address: "127.0.0.1"
     port: "3306"
     name: "simple_website"

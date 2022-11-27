@@ -3,12 +3,14 @@ package main
 import (
     "fmt"
     "net/http"
+    "log"
 
     "internal/handlers"
 
     _ "github.com/go-sql-driver/mysql"
     "github.com/gorilla/mux"
     "github.com/spf13/viper"
+    "github.com/joho/godotenv"
 )
 
 
@@ -61,9 +63,15 @@ func initConfig() error {
 
 
 func main() {
+    // parse configs
     err := initConfig()
     if err != nil {
-        panic(err.Error())
+        log.Fatal("[!] Error when parsing configs: %s", err.Error())
+    }
+    // parse variables
+    err = godotenv.Load()
+    if err != nil {
+        log.Fatal("[!] Error when parsing environment variables: %s", err.Error())
     }
 
     handleFunc()

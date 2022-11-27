@@ -1,6 +1,7 @@
 package database
 
 import (
+    "os"
     "github.com/spf13/viper"
 )
 
@@ -15,7 +16,7 @@ type DataBaseParams struct {
 
 func (db *DataBaseParams) initConfig() error {
     db.Login = viper.GetString("database.login")
-    db.Passwrd = viper.GetString("database.passwrd")
+    db.Passwrd = os.Getenv("MYSQL_PASSWORD")
     db.Address = viper.GetString("database.address")
     db.Port = viper.GetString("database.port")
     db.Name = viper.GetString("database.name")
