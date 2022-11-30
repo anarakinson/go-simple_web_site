@@ -7,15 +7,17 @@ require (
 	github.com/gorilla/mux v1.8.0
 )
 
-require internal/handlers v1.0.0
+require (
+	internal/handlers v1.0.0
+	internal/database v1.0.0
+	internal/articles v1.0.0
+)
 
-replace internal/handlers => ./internal/handlers
-
-require internal/database v1.0.0
-
-replace internal/database => ./internal/database
-
-require internal/articles v1.0.0
+replace (
+	internal/handlers => ./internal/handlers
+ 	internal/database => ./internal/database
+	internal/articles => ./internal/articles
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -42,5 +44,3 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace internal/articles => ./internal/articles
