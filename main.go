@@ -6,6 +6,7 @@ import (
     "log"
 
     "internal/handlers"
+    "internal/database"
 
     _ "github.com/go-sql-driver/mysql"
     "github.com/gorilla/mux"
@@ -74,5 +75,6 @@ func main() {
         log.Fatal("[!] Error when parsing environment variables: %s", err.Error())
     }
 
+    // start up website
     handleFunc()
 }
