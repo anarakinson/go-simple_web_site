@@ -1,0 +1,21 @@
+{{ define "authorization" }}
+
+{{ template "header" }}
+
+        <!-- <main class="px-3"> -->
+        <main role="main" class="inner cover">
+            <h1 class="cover-heading">Sign Up</h1>
+            <p class="lead"></p>
+            <form name="form" action="/signup/" method="post">
+                <input type="text" name="username" id="username" placeholder="Input user's name" class="form-control"><br>
+                <input type="text" name="email" id="email" placeholder="Input email" class="form-control"><br>
+                <input type="text" name="password" id="password" placeholder="Input password" class="form-control"><br>
+                <input type="text" name="password_confirmation" id="password_confirmation" placeholder="Confirm password" class="form-control"><br>
+                <button class="btn btn-lg btn-secondary fw-bold border-white bg-white">Add</button><br>
+            </form>
+
+        </main>
+
+{{ template "footer" }}
+
+{{ end }}

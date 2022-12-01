@@ -12,45 +12,48 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
+type User struct {
+    Username string
+    Email string
+    Password string
+}
 
-func SaveArticle(w http.ResponseWriter, r *http.Request) {
-    // Get data
+func SignUp(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Method:", r.Method)
+
+    // parse input values
     err := r.ParseForm()
     if err != nil {
-        watswrong := "Something went wrong..."
+        watswrong := "404\nCan't load page"
         StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when parsing form:", err.Error())
         return
     }
 
-    title := r.FormValue("title")
-    announce := r.FormValue("announce")
-    article_text := r.FormValue("article_text")
+    var user = User{}
+    user.Username = r.FormValue("username")
+    user.Email = r.FormValue("email")
+    user.Password = r.FormValue("password")
+    password_conf := r.FormValue("password_confirmation")
+    // print data
+    fmt.Println(user.Username)
+    fmt.Println(user.Email)
+    fmt.Println(user.Password)
+    fmt.Println(password_conf)
 
-    if (title == "") || (article_text == "") {
-        watswrong := "Title or text are not found"
-        // http.Redirect(w, r, "/something_wrong/", 301)
+    // confirm password
+    if user.Password != password_conf {
+        watswrong := "Password don't equeal to confirmation!"
         StandardTemplate("something_wrong", w, r, watswrong)
         return
-    }
-
-    // Print parsed data
-    fmt.Println("title:", title)
-    fmt.Println("announce:", announce)
-    rune_text := string([]rune(article_text))
-    if (len(rune_text) < 100) {
-        fmt.Println("article_text:", rune_text)
-    } else {
-        fmt.Println("article_text:", rune_text[:100])
     }
 
     // parse db configs
     config, err := database.ParseConfig()
     if err != nil {
-        watswrong := "Something went wrong..."
+        watswrong := "Sonething went wrong..."
         StandardTemplate("something_wrong", w, r, watswrong)
-        log.Println("[!] Error when parsing configs:", err.Error())
+        log.Println("[!] Error when parsing db configs:", err.Error())
         return
     }
 
@@ -75,16 +78,16 @@ func SaveArticle(w http.ResponseWriter, r *http.Request) {
     defer db.Close()
 
     // Insert data to table
-    query := "INSERT INTO `articles` (`title`, `announce`, `text`) VALUES (?, ?, ?)"
+    query := "INSERT INTO `users` (`username`, `email`, `password`) VALUES (?, ?, ?)"
     insert, err := db.ExecContext(
         context.Background(),
         query,
-        title,
-        announce,
-        article_text,
+        user.Username,
+        user.Email,
+        user.Password,
     )
     if err != nil {
-        watswrong := "Something went wrong..."
+        watswrong := "Some data is wrong. Maybe, your email is currently in use."
         StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when inserting to db:", err.Error())
         return
@@ -96,9 +99,8 @@ func SaveArticle(w http.ResponseWriter, r *http.Request) {
         log.Println("[!] Error when getting last id:", err.Error())
         return
     }
-    fmt.Println("[+] Insert in articles: success. Inserted id:", insertId)
+    fmt.Println("[+] Insert in users: success. Inserted id:", insertId)
 
     // Redirect: (response writer, request, page to redirect, response code)
     http.Redirect(w, r, "/main/", 301) // http.StatusSeeOther() = 301
-
 }

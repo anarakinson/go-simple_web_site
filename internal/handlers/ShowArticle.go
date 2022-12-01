@@ -2,6 +2,7 @@ package handlers
 
 import (
     "fmt"
+    "log"
     "net/http"
     "database/sql"
 
@@ -19,7 +20,12 @@ func ShowArticle(w http.ResponseWriter, r *http.Request) {
 
     // parse db configs
     config, err := database.ParseConfig()
-    if err != nil {panic(err.Error())}
+    if err != nil {
+        watswrong := "Something went wrong..."
+        StandardTemplate("something_wrong", w, r, watswrong)
+        log.Println("[!] Error when parsing db configs:", err.Error())
+        return
+    }
 
     // Connect to db
     db, err := sql.Open(
@@ -34,7 +40,10 @@ func ShowArticle(w http.ResponseWriter, r *http.Request) {
         ),
     )
     if err != nil {
-        panic(err.Error())
+        watswrong := "Database don't work!"
+        StandardTemplate("something_wrong", w, r, watswrong)
+        log.Println("[!] Error when connrcting to db:", err.Error())
+        return
     }
     defer db.Close()
 
@@ -42,7 +51,10 @@ func ShowArticle(w http.ResponseWriter, r *http.Request) {
     fmt.Println(query)
     res, err := db.Query(query)
     if err != nil {
-        panic(err.Error())
+        watswrong := "Can't find article!"
+        StandardTemplate("something_wrong", w, r, watswrong)
+        log.Println("[!] Error when loading article:", err.Error())
+        return
     }
     defer res.Close()
 
@@ -52,7 +64,10 @@ func ShowArticle(w http.ResponseWriter, r *http.Request) {
         var post articles.Article
         err = res.Scan(&post.Id, &post.Title, &post.Announce, &post.Text)
         if err != nil {
-            panic(err.Error)
+            watswrong := "Can't find article!"
+            StandardTemplate("something_wrong", w, r, watswrong)
+            log.Println("[!] Error when loading article:", err.Error())
+            return
         }
         showPost = post
     }

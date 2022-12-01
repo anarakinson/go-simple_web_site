@@ -6,7 +6,6 @@ import (
     "log"
 
     "internal/handlers"
-    "internal/database"
 
     _ "github.com/go-sql-driver/mysql"
     "github.com/gorilla/mux"
@@ -25,10 +24,13 @@ func handleFunc() {
     ) // connect static objects, such as styles, pictures, etc.
     router.HandleFunc("/main/", index).Methods("GET")
     router.HandleFunc("/create/", create).Methods("GET")
+    router.HandleFunc("/authorization/", auth).Methods("GET")
+    router.HandleFunc("/nowhere/", nowhere).Methods("GET")
     router.HandleFunc("/about/", about).Methods("GET")
     router.HandleFunc("/contacts/", contacts).Methods("GET")
     router.HandleFunc("/something_wrong/", something_wrong)
     router.HandleFunc("/save_article/", handlers.SaveArticle).Methods("POST")
+    router.HandleFunc("/signup/", handlers.SignUp).Methods("POST")
     router.HandleFunc("/articles/", handlers.ListArticles).Methods("GET")
     router.HandleFunc("/post/{id:[0-9]+}/", handlers.ShowArticle).Methods("GET")
 
@@ -40,8 +42,16 @@ func index(w http.ResponseWriter, r *http.Request) {
     handlers.StandardTemplate("index", w, r)
 }
 
+func nowhere(w http.ResponseWriter, r *http.Request) {
+    handlers.StandardTemplate("nowhere", w, r)
+}
+
 func create(w http.ResponseWriter, r *http.Request) {
     handlers.StandardTemplate("create", w, r)
+}
+
+func auth(w http.ResponseWriter, r *http.Request) {
+    handlers.StandardTemplate("authorization", w, r)
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
