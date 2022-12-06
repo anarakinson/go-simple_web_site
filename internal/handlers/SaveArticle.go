@@ -99,6 +99,6 @@ func SaveArticle(w http.ResponseWriter, r *http.Request) {
     fmt.Println("[+] Insert in articles: success. Inserted id:", insertId)
 
     // Redirect: (response writer, request, page to redirect, response code)
-    http.Redirect(w, r, "/main/", 301) // http.StatusSeeOther() = 301
+    http.Redirect(w, r, "/articles/", 301) // http.StatusSeeOther() = 301
 
 }

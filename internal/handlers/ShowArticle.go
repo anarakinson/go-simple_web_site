@@ -10,7 +10,7 @@ import (
     "github.com/gorilla/mux"
 
     "internal/database"
-    "internal/articles"
+    "internal/entities"
 )
 
 
@@ -57,11 +57,11 @@ func ShowArticle(w http.ResponseWriter, r *http.Request) {
         return
     }
     defer res.Close()
-
+    
     // parse result
-    var showPost = articles.Article{}
+    var showPost = entities.Article{}
     for res.Next() {
-        var post articles.Article
+        var post entities.Article
         err = res.Scan(&post.Id, &post.Title, &post.Announce, &post.Text)
         if err != nil {
             watswrong := "Can't find article!"

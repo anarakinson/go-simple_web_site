@@ -1,4 +1,4 @@
-{{ define "authorization" }}
+{{ define "signup" }}
 
 {{ template "header" }}
 
@@ -6,7 +6,7 @@
         <main role="main" class="inner cover">
             <h1 class="cover-heading">Sign Up</h1>
             <p class="lead"></p>
-            <form name="form" action="/signup/" method="post">
+            <form name="form" action="/signup_success/" method="post">
                 <input type="text" name="username" id="username" placeholder="Input user's name" class="form-control"><br>
                 <input type="text" name="email" id="email" placeholder="Input email" class="form-control"><br>
                 <input type="text" name="password" id="password" placeholder="Input password" class="form-control"><br>

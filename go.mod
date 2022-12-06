@@ -10,13 +10,13 @@ require (
 require (
 	internal/handlers v1.0.0
 	internal/database v1.0.0
-	internal/articles v1.0.0
+	internal/entities v1.0.0
 )
 
 replace (
 	internal/handlers => ./internal/handlers
  	internal/database => ./internal/database
-	internal/articles => ./internal/articles
+	internal/entities => ./internal/entities
 )
 
 require (

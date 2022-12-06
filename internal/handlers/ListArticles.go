@@ -8,7 +8,7 @@ import (
     _ "github.com/go-sql-driver/mysql"
 
     "internal/database"
-    "internal/articles"
+    "internal/entities"
 )
 
 
@@ -52,9 +52,9 @@ func ListArticles(w http.ResponseWriter, r *http.Request) {
     defer res.Close()
 
     // Load articles to page
-    var posts = []articles.Article{}
+    var posts = []entities.Article{}
     for res.Next() {
-        var post articles.Article
+        var post entities.Article
         err = res.Scan(&post.Id, &post.Title, &post.Announce, &post.Text)
         if err != nil {
             watswrong := "Can't find article!"

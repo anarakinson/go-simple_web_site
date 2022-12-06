@@ -8,15 +8,11 @@ import (
     "database/sql"
 
     "internal/database"
+    "internal/entities"
 
     _ "github.com/go-sql-driver/mysql"
 )
 
-type User struct {
-    Username string
-    Email string
-    Password string
-}
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Method:", r.Method)
@@ -30,7 +26,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var user = User{}
+    var user = entities.User{}
     user.Username = r.FormValue("username")
     user.Email = r.FormValue("email")
     user.Password = r.FormValue("password")
@@ -44,6 +40,10 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
     // confirm password
     if user.Password != password_conf {
         watswrong := "Password don't equeal to confirmation!"
+        StandardTemplate("something_wrong", w, r, watswrong)
+        return
+    } else if (user.Username == "") || (user.Email == "") || (user.Password == "") {
+        watswrong := "Missing data: you have to enter username, email and password"
         StandardTemplate("something_wrong", w, r, watswrong)
         return
     }
@@ -102,5 +102,5 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
     fmt.Println("[+] Insert in users: success. Inserted id:", insertId)
 
     // Redirect: (response writer, request, page to redirect, response code)
-    http.Redirect(w, r, "/main/", 301) // http.StatusSeeOther() = 301
+    http.Redirect(w, r, "/signin/", 301) // http.StatusSeeOther() = 301
 }

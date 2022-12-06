@@ -12,7 +12,7 @@ CREATE TABLE articles (
 	`title` VARCHAR(100) NOT NULL, -- `title of article`
 	`announce` VARCHAR(255), -- `anouncement of article`
 	`text` TEXT NOT NULL, -- `full text of article`
-    `user_id` INT NOT NULL,
+    `user_id` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 );
 
