@@ -44,7 +44,7 @@ func ListArticles(w http.ResponseWriter, r *http.Request) {
 
     res, err := db.Query("SELECT `id`, `title`, `announce`, `text` FROM `articles`")
     if err != nil {
-        watswrong := "Can't find article!"
+        watswrong := "Can't find any articles!"
         StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when loading article:", err.Error())
         return
@@ -67,5 +67,5 @@ func ListArticles(w http.ResponseWriter, r *http.Request) {
     }
 
     // display page
-    StandardTemplate("list_articles", w, r, posts)
+    StandardTemplate("articles", w, r, posts)
 }

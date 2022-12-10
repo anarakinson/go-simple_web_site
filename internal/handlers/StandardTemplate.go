@@ -10,6 +10,7 @@ import (
 )
 
 func StandardTemplate(page_name string, w http.ResponseWriter, r *http.Request, args ...interface{}) {
+    // fmt.Println(r.URL.Path)
     templ, err := template.ParseFiles(
         "templates/" + page_name + ".html",
         "templates/head.html",
@@ -19,7 +20,7 @@ func StandardTemplate(page_name string, w http.ResponseWriter, r *http.Request, 
 
 
     if (err != nil) {
-        watswrong := "404\nCan't find page"
+        watswrong := "Can't find page"
         StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when executing template:", err.Error())
         return

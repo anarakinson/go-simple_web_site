@@ -11,7 +11,7 @@ db:
 
 .PHONY: migrations
 migrations:
-	migrate -path ./db_schema -database 'mysql://root:${MYSQL_PASSWORD}@tcp(127.0.0.1:3307)/simple_website?query' up
+	../migrate/migrate -path ./db_schema -database 'mysql://root:${MYSQL_PASSWORD}@tcp(127.0.0.1:3307)/simple_website?query' up
 
 .PHONY: build
 build:

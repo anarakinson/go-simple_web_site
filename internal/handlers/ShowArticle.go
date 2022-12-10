@@ -57,7 +57,7 @@ func ShowArticle(w http.ResponseWriter, r *http.Request) {
         return
     }
     defer res.Close()
-    
+
     // parse result
     var showPost = entities.Article{}
     for res.Next() {

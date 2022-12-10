@@ -1,81 +1,15 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
     "log"
 
-    "internal/handlers"
+    "internal/server"
 
     _ "github.com/go-sql-driver/mysql"
-    "github.com/gorilla/mux"
     "github.com/spf13/viper"
     "github.com/joho/godotenv"
 )
 
-
-func handleFunc() {
-    router := mux.NewRouter()
-    port := viper.GetString("app.port")
-
-    http.Handle(
-        "/static/",
-        http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))),
-    ) // connect static objects, such as styles, pictures, etc.
-    router.HandleFunc("/main/", index).Methods("GET")
-    router.HandleFunc("/create/", create).Methods("GET")
-    router.HandleFunc("/signup/", signup).Methods("GET")
-    router.HandleFunc("/signin/", signin).Methods("GET")
-    router.HandleFunc("/nowhere/", nowhere).Methods("GET")
-    router.HandleFunc("/database_query/", database_query).Methods("GET")
-    router.HandleFunc("/about/", about).Methods("GET")
-    router.HandleFunc("/contacts/", contacts).Methods("GET")
-    router.HandleFunc("/something_wrong/", something_wrong)
-    router.HandleFunc("/save_article/", handlers.SaveArticle).Methods("POST")
-    router.HandleFunc("/run_query/", handlers.RunQuery).Methods("POST")
-    router.HandleFunc("/signup_success/", handlers.SignUp).Methods("POST")
-    router.HandleFunc("/articles/", handlers.ListArticles).Methods("GET")
-    router.HandleFunc("/post/{id:[0-9]+}/", handlers.ShowArticle).Methods("GET")
-
-    http.Handle("/", router)
-    http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
-}
-
-func index(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("index", w, r)
-}
-
-func nowhere(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("nowhere", w, r)
-}
-
-func database_query(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("database_query", w, r)
-}
-
-func create(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("create", w, r)
-}
-
-func signup(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("signup", w, r)
-}
-
-func signin(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("signin", w, r)
-}
-
-func about(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("about", w, r)
-}
-
-func contacts(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("contacts", w, r)
-}
-
-func something_wrong(w http.ResponseWriter, r *http.Request) {
-    handlers.StandardTemplate("something_wrong", w, r)
-}
 
 func initConfig() error {
     viper.AddConfigPath("configs")
@@ -97,5 +31,5 @@ func main() {
     }
 
     // start up website
-    handleFunc()
+    server.RunServer()
 }

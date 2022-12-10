@@ -7,10 +7,8 @@ import (
     "database/sql"
 
     _ "github.com/go-sql-driver/mysql"
-    // "github.com/gorilla/mux"
 
     "internal/database"
-    // "internal/entities"
 )
 
 func RunQuery(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +31,7 @@ func RunQuery(w http.ResponseWriter, r *http.Request) {
     // parse db configs
     config, err := database.ParseConfig()
     if err != nil {
-        watswrong := "Something went wrong..."
+        watswrong := fmt.Sprintf("Something went wrong...\n%s", err.Error())
         StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when parsing configs:", err.Error())
         return
@@ -62,7 +60,7 @@ func RunQuery(w http.ResponseWriter, r *http.Request) {
     // run query
     rows, err := db.Query(query)
     if err != nil {
-        watswrong := "Can't execute query"
+        watswrong := fmt.Sprintf("Can't execute query \n%s", err.Error())
         StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when executing query:", err.Error())
         return
@@ -71,7 +69,7 @@ func RunQuery(w http.ResponseWriter, r *http.Request) {
 
     cols, err := rows.Columns()
     if err != nil {
-        watswrong := "Can't execute query"
+        watswrong := fmt.Sprintf("Can't execute query \n%s", err.Error())
         StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when executing query:", err.Error())
         return

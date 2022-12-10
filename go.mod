@@ -11,12 +11,14 @@ require (
 	internal/handlers v1.0.0
 	internal/database v1.0.0
 	internal/entities v1.0.0
+	internal/server v1.0.0
 )
 
 replace (
 	internal/handlers => ./internal/handlers
  	internal/database => ./internal/database
 	internal/entities => ./internal/entities
+	internal/server => ./internal/server
 )
 
 require (
