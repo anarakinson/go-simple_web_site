@@ -3,7 +3,6 @@ package server
 import (
     "fmt"
     "net/http"
-    // "log"
 
     "internal/handlers"
 
@@ -17,10 +16,9 @@ func RunServer() {
     router := mux.NewRouter()
     port := viper.GetString("app.port")
 
-    http.Handle(
-        "/static/",
-        http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))),
-    ) // connect static objects, such as styles, pictures, etc.
+    // connect static objects, such as styles, pictures, etc.
+    prefix := http.StripPrefix("/static/", http.FileServer(secureFileServer{http.Dir("./static/")}))
+    http.Handle("/static/", prefix)
 
     // site map
     router.HandleFunc("/main/", index).Methods("GET")

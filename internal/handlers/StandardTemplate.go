@@ -20,8 +20,6 @@ func StandardTemplate(page_name string, w http.ResponseWriter, r *http.Request, 
 
 
     if (err != nil) {
-        watswrong := "Can't find page"
-        StandardTemplate("something_wrong", w, r, watswrong)
         log.Println("[!] Error when executing template:", err.Error())
         return
     } else {
