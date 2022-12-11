@@ -1,6 +1,6 @@
 CREATE TABLE users (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `username` VARCHAR(255) NOT NULL, -- `nickname`
+    `username` VARCHAR(255) UNIQUE NOT NULL, -- `nickname`
     `email` VARCHAR(255) UNIQUE NOT NULL, -- `email address`
     `password` VARCHAR(255) NOT NULL, -- `password hash`
     PRIMARY KEY (`id`)

@@ -13,12 +13,12 @@ type secureFileServer struct {
 func (sfs secureFileServer) Open(name string) (result http.File, err error) {
     f, err := sfs.Dir.Open(name)
     if err != nil {
-        return
+        return nil, err
     }
 
     fi, err := f.Stat()
     if err != nil {
-        return
+        return nil, err
     }
     if fi.IsDir() {
         // Return a response that would have been if directory would not exist:

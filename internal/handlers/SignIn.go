@@ -4,7 +4,6 @@ import (
     "fmt"
     "log"
     "net/http"
-    "context"
     "database/sql"
 
     "internal/database"
@@ -15,7 +14,7 @@ import (
 )
 
 
-func SignUp(w http.ResponseWriter, r *http.Request) {
+func SignIn(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Method:", r.Method)
 
     // parse input values
@@ -29,30 +28,19 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
     var user = entities.User{}
     user.Username = r.FormValue("username")
-    user.Email = r.FormValue("email")
     password := r.FormValue("password")
-    password_conf := r.FormValue("password_confirmation")
-    fmt.Printf("%T\n", password)
 
+    fmt.Println(user.Username)
+    fmt.Println(password)
     // confirm password
-    if password != password_conf {
-        watswrong := "Password don't equeal to confirmation!"
-        StandardTemplate("something_wrong", w, r, watswrong)
-        return
-    } else if (user.Username == "") || (user.Email == "") || (password == "") {
-        watswrong := "Missing data: you have to enter username, email and password"
+    if (user.Username == "") || (password == "") {
+        watswrong := "Missing data: you have to enter username and password"
         StandardTemplate("something_wrong", w, r, watswrong)
         return
     }
 
     // hashing password
     user.Password = utils.GetPswrdHash(password)
-
-    // print data
-    fmt.Println(user.Username)
-    fmt.Println(user.Email)
-    fmt.Println(user.Password)
-
 
     // parse db configs
     config, err := database.ParseConfig()
@@ -84,29 +72,50 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
     defer db.Close()
 
     // Insert data to table
-    query := "INSERT INTO `users` (`username`, `email`, `password`) VALUES (?, ?, ?)"
-    insert, err := db.ExecContext(
-        context.Background(),
-        query,
-        user.Username,
-        user.Email,
-        user.Password,
-    )
+    query := fmt.Sprintf("SELECT `username`, `email`,  `password` FROM `users` WHERE `username` = '%s'", user.Username)
+    fmt.Println(query)
+    res, err := db.Query(query)
     if err != nil {
-        watswrong := "Some data is wrong. Maybe, your email is currently in use."
+        watswrong := "Can't find user!"
         StandardTemplate("something_wrong", w, r, watswrong)
-        log.Println("[!] Error when inserting to db:", err.Error())
+        log.Println("[!] Error when logging user:", err.Error())
         return
     }
-    insertId, err := insert.LastInsertId()
-    if err != nil {
-        watswrong := "Something went wrong..."
+    defer res.Close()
+
+    // parse result
+    var logedUser = entities.User{}
+    for res.Next() {
+        var userInfo entities.User
+        err = res.Scan(&userInfo.Username, &userInfo.Email, &userInfo.Password)
+        fmt.Println(err)
+        if err != nil {
+            watswrong := "Can't find user!"
+            StandardTemplate("something_wrong", w, r, watswrong)
+            log.Println("[!] Error when logging user:", err.Error())
+            return
+        }
+        logedUser = userInfo
+    }
+
+    // display user
+    if logedUser.Username == "" {
+        watswrong := "Can't find user!"
         StandardTemplate("something_wrong", w, r, watswrong)
-        log.Println("[!] Error when getting last id:", err.Error())
+        log.Println("[!] Error when logging user: No such user in database!")
         return
     }
-    fmt.Println("[+] Insert in users: success. Inserted id:", insertId)
+
+    // check password
+    if logedUser.Password == user.Password {
+        fmt.Println("SUCCESS")
+    } else {
+        watswrong := "Incorrect password!"
+        StandardTemplate("something_wrong", w, r, watswrong)
+        log.Println("[!] Error when logging user: Incorrect password!")
+        return
+    }
 
     // Redirect: (response writer, request, page to redirect, response code)
-    http.Redirect(w, r, "/signin/", 301) // http.StatusSeeOther() = 301
+    http.Redirect(w, r, "/main/", 301) // http.StatusSeeOther() = 301
 }

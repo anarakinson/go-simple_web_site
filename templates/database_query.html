@@ -12,8 +12,13 @@
             </form>
             <p class="lead"></p>
             {{ if . }}
-                {{ range . }}
-                    <li>{{ . }}</li>
+                {{ range $key, $value := . }}
+                    <li>
+                        <strong>{{ $key }}</strong>:<br>
+                        {{ range $subkey, $subvalue := $value }}
+                            <li><strong>{{ $subkey }}</strong>: {{ $subvalue }}</li>
+                        {{ end }}
+                    </li><br>
                 {{ end }}
             {{ end }}
             <p class="lead"></p>

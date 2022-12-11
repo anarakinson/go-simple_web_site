@@ -96,11 +96,8 @@ func RunQuery(w http.ResponseWriter, r *http.Request) {
         row_id += 1
     }
 
-    // display data
-    for _, d := range(queryResult) {
-        fmt.Println(d)
-    }
-
+    // display result counts
+    fmt.Printf("[+] Found %d results for query\n", len(queryResult))
 
     // return
     StandardTemplate("database_query", w, r, queryResult)

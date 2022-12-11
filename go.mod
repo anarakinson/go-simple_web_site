@@ -12,6 +12,7 @@ require (
 	internal/database v1.0.0
 	internal/entities v1.0.0
 	internal/server v1.0.0
+	internal/utils v1.0.0
 )
 
 replace (
@@ -19,6 +20,7 @@ replace (
  	internal/database => ./internal/database
 	internal/entities => ./internal/entities
 	internal/server => ./internal/server
+	internal/utils => ./internal/utils
 )
 
 require (
