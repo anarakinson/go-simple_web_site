@@ -9,7 +9,12 @@ Set host in configs/config.yaml
 ### New version
 
 ***
-from comand line run:
+To <b>create docker container</b> use shell command:
+```shell
+docker-compose build
+```
+
+To <b>run application</b> use shell command:
 ```shell
 docker-compose up
 ```
