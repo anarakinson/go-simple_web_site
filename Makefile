@@ -1,25 +1,15 @@
 include .$(PWD)/.env
 
-.PHONY: db
-db:
-	docker run \
-	-tid --network=simple_website_network \
-	--name simple_website_db \
-	-e MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD} \
-	-e MYSQL_DATABASE=simple_website \
-	-p 3307:3306 \
-	-d --rm mysql:latest
+.PHONY: start_app
+start_app:
+	docker-compose up
 
-.PHONY: migrations
-migrations:
-	migrate -path ./db_schema -database 'mysql://root:${MYSQL_PASSWORD}@tcp(127.0.0.1:3307)/simple_website?query' up
+.PHONY: build_app
+build_app:
+	docker-compose build
 
-.PHONY: start
-start:
-	go run main.go
+.PHONY: stop_app
+stop_app:
+	docker-compose down
 
-.PHONY: stop
-stop:
-	docker stop simple_website_db
-
-.DEFAULT_GOAL := start
+.DEFAULT_GOAL := start_app
