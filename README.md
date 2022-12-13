@@ -1,10 +1,21 @@
 # Simple Web Site
-
+---
 Create file .env to store variable: <b>MYSQL_PASSWORD={my_password}</b>
 
 where <b>{my_password}</b> - is your password.
 
 Set host in configs/config.yaml
+---
+### New version
+
+***
+from comand line run:
+```shell
+docker-compose up
+```
+
+---
+### Old version
 
 ***
 To make migrations use https://github.com/golang-migrate/migrate

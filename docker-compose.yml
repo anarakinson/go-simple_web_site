@@ -1,0 +1,21 @@
+version: "3.5"
+
+services:
+    simple_website:
+        build: .
+        restart: always
+        ports:
+            - 8084:8084
+
+    database:
+        image: mysql:8.0
+        cap_add:
+            - SYS_NICE
+        restart: always
+        command: --init-file /database/init.sql
+        volumes:
+            - ./database/init.sql:/database/init.sql
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+        ports:
+            - ${MYSQL_PORT}:3306

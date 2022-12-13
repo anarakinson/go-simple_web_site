@@ -2,6 +2,7 @@ package main
 
 import (
     "log"
+    "os"
 
     "internal/server"
 
@@ -30,6 +31,7 @@ func main() {
         log.Fatal("[!] Error when parsing environment variables: %s", err.Error())
     }
 
+    log.Println(os.Getenv("MYSQL_PASSWORD"))
     // start up website
     server.RunServer()
 }

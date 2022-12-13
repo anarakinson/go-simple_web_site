@@ -4,6 +4,6 @@ app:
 
 database:
     login: "root"
-    address: "127.0.0.1"
-    port: "3307"
+    address: "host.docker.internal"
+    port: "3306"
     name: "simple_website"

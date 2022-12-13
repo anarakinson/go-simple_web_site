@@ -88,7 +88,6 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
     for res.Next() {
         var userInfo entities.User
         err = res.Scan(&userInfo.Username, &userInfo.Email, &userInfo.Password)
-        fmt.Println(err)
         if err != nil {
             watswrong := "Can't find user!"
             StandardTemplate("something_wrong", w, r, watswrong)

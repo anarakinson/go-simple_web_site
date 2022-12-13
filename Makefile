@@ -3,6 +3,7 @@ include .$(PWD)/.env
 .PHONY: db
 db:
 	docker run \
+	-tid --network=simple_website_network \
 	--name simple_website_db \
 	-e MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD} \
 	-e MYSQL_DATABASE=simple_website \
@@ -11,11 +12,7 @@ db:
 
 .PHONY: migrations
 migrations:
-	../migrate/migrate -path ./db_schema -database 'mysql://root:${MYSQL_PASSWORD}@tcp(127.0.0.1:3307)/simple_website?query' up
-
-.PHONY: build
-build:
-	go build -v
+	migrate -path ./db_schema -database 'mysql://root:${MYSQL_PASSWORD}@tcp(127.0.0.1:3307)/simple_website?query' up
 
 .PHONY: start
 start:
